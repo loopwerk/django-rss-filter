@@ -1,0 +1,17 @@
+[project]
+name = "django-rss-filter-example"
+version = "0.1.0"
+description = "A simple Django project using django-rss-filter"
+authors = [
+    {name = "Kevin Renskers", email = "kevin@loopwerk.io"},
+]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.1.7",
+    "django-rss-filter",
+]
+
+[tool.uv.sources]
+django-rss-filter = { path = "../", editable = true }
