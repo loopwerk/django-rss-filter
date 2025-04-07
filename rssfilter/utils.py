@@ -1,20 +1,20 @@
-import fastfeedparser
+import feedparser
 from feedgen.feed import FeedGenerator
 
 
 def validate_feed(feed_url: str) -> bool:
     try:
-        fastfeedparser.parse(feed_url)
+        feedparser.parse(feed_url)
         return True
     except ValueError:
         return False
 
 
 def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str) -> str:
-    feed = fastfeedparser.parse(feed_body)
+    feed = feedparser.parse(feed_body)
 
     fg = FeedGenerator()
-    fg.id(feed.feed.link)
+    fg.id(feed.feed.get("id", feed.feed.link))
     fg.title(feed.feed.title)
     fg.link(href=feed.feed.link)
     fg.description(feed.feed.get("description", "Filtered feed"))
@@ -32,12 +32,12 @@ def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str) -
 
         # Check if the categories/terms contain filtered categories
         if len(filtered_categories_list) and hasattr(entry, "tags"):
-            terms = [tag["term"].lower() for tag in entry.tags]
+            terms = [tag.term.lower() for tag in entry.tags]
             if any(filtered_category in term for term in terms for filtered_category in filtered_categories_list):
                 continue
 
         fe = fg.add_entry()
-        fe.id(entry.link)
+        fe.id(entry.get("id", entry.link))
         fe.title(entry.title)
         fe.link(href=entry.link)
         fe.description(entry.get("description", ""))

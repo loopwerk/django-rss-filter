@@ -1,6 +1,6 @@
 [project]
 name = "django-rss-filter"
-version = "0.1.0"
+version = "0.2.0"
 description = "Filter public RSS feeds, remove articles that contain certain keywords or categories."
 authors = [
     {name = "Kevin Renskers", email = "kevin@loopwerk.io"},
@@ -12,8 +12,8 @@ keywords = ["rss", "atom", "feed", "filter", "mute", "django"]
 requires-python = ">=3.9"
 dependencies = [
     "django>=3.2.0",
-    "fastfeedparser>=0.3.7",
     "feedgen>=1.0.0",
+    "feedparser>=6.0.11",
     "httpx>=0.28.1",
 ]
 
@@ -26,7 +26,7 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/loopwerk/django-rss-filter/issues"
+Homepage = "https://github.com/loopwerk/django-rss-filter/"
 Repository = "https://github.com/loopwerk/django-rss-filter.git"
 Issues = "https://github.com/loopwerk/django-rss-filter/issues"
 

@@ -1,4 +1,4 @@
-import fastfeedparser
+import feedparser
 from django.test import TestCase
 
 from rssfilter.utils import filter_feed
@@ -37,40 +37,40 @@ body = """
 class UtilsTest(TestCase):
     def test_filter_words(self):
         filtered_feed_body = filter_feed(body, filtered_words="One", filtered_categories="")
-        filtered_feed = fastfeedparser.parse(filtered_feed_body)
+        filtered_feed = feedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 1)
         self.assertEqual(filtered_feed.entries[0].title, "Article Two")
 
     def test_filter_words_case_insenstive(self):
         filtered_feed_body = filter_feed(body, filtered_words="ONE", filtered_categories="")
-        filtered_feed = fastfeedparser.parse(filtered_feed_body)
+        filtered_feed = feedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 1)
         self.assertEqual(filtered_feed.entries[0].title, "Article Two")
 
     def test_filter_words_empty(self):
         filtered_feed_body = filter_feed(body, filtered_words="", filtered_categories="")
-        filtered_feed = fastfeedparser.parse(filtered_feed_body)
+        filtered_feed = feedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 2)
 
     def test_filter_words_not_found(self):
         filtered_feed_body = filter_feed(body, filtered_words="Foo", filtered_categories="")
-        filtered_feed = fastfeedparser.parse(filtered_feed_body)
+        filtered_feed = feedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 2)
 
     def test_filter_words_comma_seperated(self):
         filtered_feed_body = filter_feed(body, filtered_words="Foo, Bar, One", filtered_categories="")
-        filtered_feed = fastfeedparser.parse(filtered_feed_body)
+        filtered_feed = feedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 1)
         self.assertEqual(filtered_feed.entries[0].title, "Article Two")
 
     def test_filter_categories(self):
         filtered_feed_body = filter_feed(body, filtered_words="", filtered_categories="Category Four")
-        filtered_feed = fastfeedparser.parse(filtered_feed_body)
+        filtered_feed = feedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 1)
         self.assertEqual(filtered_feed.entries[0].title, "Article One")
