@@ -21,7 +21,12 @@ def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str) -
     fg.link(href=feed.feed.link)
     fg.description(feed.feed.get("description", "Filtered feed"))
     fg.language(feed.feed.get("language", "en"))
-    fg.updated(feed.feed.updated)
+
+    if updated := feed.feed.get("updated"):
+        fg.updated(updated)
+
+    if published := feed.feed.get("published"):
+        fg.pubDate(published)
 
     filtered_words_list = [item.strip().lower() for item in filtered_words.split(",") if item.strip()]
     filtered_categories_list = [item.strip().lower() for item in filtered_categories.split(",") if item.strip()]
