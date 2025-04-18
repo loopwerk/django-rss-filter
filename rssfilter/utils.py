@@ -4,7 +4,9 @@ from feedgen.feed import FeedGenerator
 
 def validate_feed(feed_url: str) -> bool:
     try:
-        feedparser.parse(feed_url)
+        result = feedparser.parse(feed_url)
+        if not result.version:
+            return False
         return True
     except ValueError:
         return False
