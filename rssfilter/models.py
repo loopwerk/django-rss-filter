@@ -59,7 +59,7 @@ class FeedCache(models.Model):
         if self.cache_date and self.cache_date > five_mins_ago:
             return self.feed_body
 
-        r = httpx.get(self.feed_url)
+        r = httpx.get(self.feed_url, follow_redirects=True)
         self.feed_body = r.text
         self.cache_date = timezone.now()
         self.save()
