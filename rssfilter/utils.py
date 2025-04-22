@@ -1,16 +1,30 @@
 import feedparser
+import httpx
 from feedgen.feed import FeedGenerator
+from httpx import ConnectError, ConnectTimeout
+
+from . import USER_AGENT
 
 
-def validate_feed(feed_url: str) -> bool:
+def validate_feed(feed_url: str) -> tuple[bool, str]:
     try:
-        feed = feedparser.parse(feed_url)
+        # Fetch content using httpx rather than having feedparser do this,
+        # since we can't set a timeout with feedparser. It also makes sure
+        # that validating and then fetching the feed is done in a consistent
+        # manner.
+        r = httpx.get(feed_url, follow_redirects=True, timeout=2, headers={"User-Agent": USER_AGENT})
+
+        feed = feedparser.parse(r.text)
         version = feed.get("version", "")
         if not version:
-            return False
-        return True
+            return False, "This doesn't seem to be a valid RSS or Atom feed"
+        return True, ""
     except ValueError:
-        return False
+        return False, "This doesn't seem to be a valid RSS or Atom feed"
+    except ConnectTimeout:
+        return False, "Couldn't load the URL due to a connection timeout"
+    except ConnectError:
+        return False, "Couldn't load the URL due to a connection error"
 
 
 def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str) -> str:

@@ -7,6 +7,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
+from . import USER_AGENT
 from .settings import RSS_FILTER_CACHE_SECONDS
 from .utils import filter_feed, validate_feed
 
@@ -29,8 +30,9 @@ class FilteredFeed(models.Model):
         # Make sure we have a valid feed.
         # Let's assume it's valid if it's already in FeedCache.
         if not FeedCache.objects.filter(feed_url=self.feed_url).exists():
-            if not validate_feed(self.feed_url):
-                raise ValidationError({"feed_url": "This doesn't seem to be a valid RSS or Atom feed"})
+            valid, message = validate_feed(self.feed_url)
+            if not valid:
+                raise ValidationError({"feed_url": message})
 
     def get_filtered_feed_body(self) -> str:
         five_mins_ago = timezone.now() - timedelta(seconds=RSS_FILTER_CACHE_SECONDS)
@@ -59,7 +61,7 @@ class FeedCache(models.Model):
         if self.cache_date and self.cache_date > five_mins_ago:
             return self.feed_body
 
-        r = httpx.get(self.feed_url, follow_redirects=True)
+        r = httpx.get(self.feed_url, follow_redirects=True, timeout=2, headers={"User-Agent": USER_AGENT})
         self.feed_body = r.text
         self.cache_date = timezone.now()
         self.save()
