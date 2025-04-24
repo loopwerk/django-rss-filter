@@ -1,6 +1,6 @@
 # django-rss-filter
 
-This is a Django app that creates filtered RSS feeds. It does this by filtering exsiting RSS feeds, removing articles that match filtered words and/or filtered categories. It's what powers https://www.rssfilter.com.
+This is a Django app that creates filtered RSS feeds. It does this by filtering existing RSS feeds, removing articles that match filtered words and/or filtered categories. It's what powers https://www.rssfilter.com.
 
 It comes with one view that returns the filtered feed XML, as well as Django Admin configuration to make it possible and easy to self-host your own instance of django-rss-filter. It does not come with views to create or edit filtered feeds; this can be done using the Django Admin.
 
