@@ -1,12 +1,13 @@
 import feedparser
 import httpx
 from feedgen.feed import FeedGenerator
+from feedparser import FeedParserDict
 from httpx import ConnectError, ConnectTimeout
 
 from . import USER_AGENT
 
 
-def validate_feed(feed_url: str) -> tuple[bool, str]:
+def validate_feed(feed_url: str) -> tuple[bool, str | FeedParserDict]:
     try:
         # Fetch content using httpx rather than having feedparser do this,
         # since we can't set a timeout with feedparser. It also makes sure
@@ -18,7 +19,7 @@ def validate_feed(feed_url: str) -> tuple[bool, str]:
         version = feed.get("version", "")
         if not version:
             return False, "This doesn't seem to be a valid RSS or Atom feed"
-        return True, ""
+        return True, feed
     except ValueError:
         return False, "This doesn't seem to be a valid RSS or Atom feed"
     except ConnectTimeout:
