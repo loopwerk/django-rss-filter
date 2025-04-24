@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+from typing import Literal
+
 import feedparser
 import httpx
 from feedgen.feed import FeedGenerator
@@ -7,7 +10,19 @@ from httpx import ConnectError, ConnectTimeout
 from . import USER_AGENT
 
 
-def validate_feed(feed_url: str) -> tuple[bool, str | FeedParserDict]:
+@dataclass
+class FeedValidationSuccess:
+    valid: Literal[True]
+    feed: FeedParserDict
+
+
+@dataclass
+class FeedValidationError:
+    valid: Literal[False]
+    error: str
+
+
+def validate_feed(feed_url: str) -> FeedValidationSuccess | FeedValidationError:
     try:
         # Fetch content using httpx rather than having feedparser do this,
         # since we can't set a timeout with feedparser. It also makes sure
@@ -18,14 +33,14 @@ def validate_feed(feed_url: str) -> tuple[bool, str | FeedParserDict]:
         feed = feedparser.parse(r.text)
         version = feed.get("version", "")
         if not version:
-            return False, "This doesn't seem to be a valid RSS or Atom feed"
-        return True, feed
+            return FeedValidationError(False, "This doesn't seem to be a valid RSS or Atom feed")
+        return FeedValidationSuccess(True, feed)
     except ValueError:
-        return False, "This doesn't seem to be a valid RSS or Atom feed"
+        return FeedValidationError(False, "This doesn't seem to be a valid RSS or Atom feed")
     except ConnectTimeout:
-        return False, "Couldn't load the URL due to a connection timeout"
+        return FeedValidationError(False, "Couldn't load the URL due to a connection timeout")
     except ConnectError:
-        return False, "Couldn't load the URL due to a connection error"
+        return FeedValidationError(False, "Couldn't load the URL due to a connection error")
 
 
 def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str) -> str:

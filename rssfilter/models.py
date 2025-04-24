@@ -30,9 +30,9 @@ class FilteredFeed(models.Model):
         # Make sure we have a valid feed.
         # Let's assume it's valid if it's already in FeedCache.
         if not FeedCache.objects.filter(feed_url=self.feed_url).exists():
-            valid, message = validate_feed(self.feed_url)
-            if not valid:
-                raise ValidationError({"feed_url": message})
+            result = validate_feed(self.feed_url)
+            if not result.valid:
+                raise ValidationError({"feed_url": result.error})
 
     def get_filtered_feed_body(self) -> str:
         five_mins_ago = timezone.now() - timedelta(seconds=RSS_FILTER_CACHE_SECONDS)
