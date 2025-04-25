@@ -36,8 +36,16 @@ class FilteredFeed(models.Model):
                 raise ValidationError({"feed_url": result.error})
 
     def save(self, *args, **kwargs):
-        self.cache_date = None
-        self.filtered_feed_body = ""
+        if self.pk:
+            old = FilteredFeed.objects.get(pk=self.pk)
+            if (
+                old.feed_url != self.feed_url
+                or old.filtered_words != self.filtered_words
+                or old.filtered_categories != self.filtered_categories
+            ):
+                self.cache_date = None
+                self.filtered_feed_body = ""
+
         super().save(*args, **kwargs)
 
     def get_filtered_feed_body(self) -> str:

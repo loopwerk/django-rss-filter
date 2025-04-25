@@ -87,7 +87,7 @@ wheels = [
 
 [[package]]
 name = "django-rss-filter"
-version = "0.10.0"
+version = "0.10.1"
 source = { editable = "." }
 dependencies = [
     { name = "django", version = "4.2.20", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
