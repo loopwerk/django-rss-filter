@@ -35,6 +35,11 @@ class FilteredFeed(models.Model):
             if not result.valid:
                 raise ValidationError({"feed_url": result.error})
 
+    def save(self, *args, **kwargs):
+        self.cache_date = None
+        self.filtered_feed_body = ""
+        super().save(*args, **kwargs)
+
     def get_filtered_feed_body(self) -> str:
         five_mins_ago = timezone.now() - timedelta(seconds=RSS_FILTER_CACHE_SECONDS)
         if self.cache_date and self.cache_date > five_mins_ago:
