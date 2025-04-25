@@ -49,3 +49,13 @@ This setting controls how long a feed will be cached before it's fetched, filter
 ## Tests
 
 Unit tests can be run with `uv run pytest`.
+
+## About Feature Requests
+
+This project is feature-complete — it does what I needed it to do, and I’m not actively looking to expand its functionality.
+
+I’m not accepting feature requests via issues. Please understand that asking for new features is essentially asking for free work — not just to build something, but to maintain it over time. And since I don’t personally need those features, I’m unlikely to invest time in them.
+
+If you’d like to add a new feature, you’re welcome to open a pull request. Just know that I’ll evaluate it carefully, because even merged contributions become part of what I maintain. To avoid spending time on a PR that may not be accepted, I recommend starting a discussion first — that way we can talk through the idea and see if it fits.
+
+This approach helps me avoid burnout and keep the project sustainable. Thanks for understanding!
