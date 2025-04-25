@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from httpx import ConnectError, ConnectTimeout
 
 from . import USER_AGENT
 from .settings import RSS_FILTER_CACHE_SECONDS
@@ -61,9 +62,13 @@ class FeedCache(models.Model):
         if self.cache_date and self.cache_date > five_mins_ago:
             return self.feed_body
 
-        r = httpx.get(self.feed_url, follow_redirects=True, timeout=2, headers={"User-Agent": USER_AGENT})
-        self.feed_body = r.text
-        self.cache_date = timezone.now()
-        self.save()
+        try:
+            r = httpx.get(self.feed_url, follow_redirects=True, timeout=2, headers={"User-Agent": USER_AGENT})
+            self.feed_body = r.text
+            self.cache_date = timezone.now()
+            self.save()
+        except (ConnectTimeout, ConnectError):
+            # Do nothing, just return the cached version
+            pass
 
         return self.feed_body
