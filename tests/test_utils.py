@@ -1,7 +1,7 @@
 import feedparser
 from django.test import TestCase
 
-from rssfilter.utils import filter_feed
+from rssfilter.utils import filter_feed, validate_feed_body
 
 body = """
 <?xml version="1.0" encoding="UTF-8"?>
@@ -35,6 +35,18 @@ body = """
 
 
 class UtilsTest(TestCase):
+    def test_validate_feed_body_vlaid(self):
+        result = validate_feed_body(body)
+        self.assertTrue(result)
+
+    def test_validate_feed_body_invalid(self):
+        result = validate_feed_body("<html>Hello</html>")
+        self.assertFalse(result)
+
+    def test_validate_feed_body_empty(self):
+        result = validate_feed_body("")
+        self.assertFalse(result)
+
     def test_filter_words(self):
         filtered_feed_body = filter_feed(body, filtered_words="One", filtered_categories="")
         filtered_feed = feedparser.parse(filtered_feed_body)
@@ -55,6 +67,12 @@ class UtilsTest(TestCase):
 
         self.assertEqual(len(filtered_feed.entries), 2)
 
+    def test_filter_words_with_empty_quotes(self):
+        filtered_feed_body = filter_feed(body, filtered_words='""', filtered_categories="")
+        filtered_feed = feedparser.parse(filtered_feed_body)
+
+        self.assertEqual(len(filtered_feed.entries), 2)
+
     def test_filter_words_not_found(self):
         filtered_feed_body = filter_feed(body, filtered_words="Foo", filtered_categories="")
         filtered_feed = feedparser.parse(filtered_feed_body)
@@ -63,6 +81,20 @@ class UtilsTest(TestCase):
 
     def test_filter_words_comma_seperated(self):
         filtered_feed_body = filter_feed(body, filtered_words="Foo, Bar, One", filtered_categories="")
+        filtered_feed = feedparser.parse(filtered_feed_body)
+
+        self.assertEqual(len(filtered_feed.entries), 1)
+        self.assertEqual(filtered_feed.entries[0].title, "Article Two")
+
+    def test_filter_words_with_quotes(self):
+        filtered_feed_body = filter_feed(body, filtered_words="'Foo', 'Bar', 'One'", filtered_categories="")
+        filtered_feed = feedparser.parse(filtered_feed_body)
+
+        self.assertEqual(len(filtered_feed.entries), 1)
+        self.assertEqual(filtered_feed.entries[0].title, "Article Two")
+
+    def test_filter_words_with_double_quotes(self):
+        filtered_feed_body = filter_feed(body, filtered_words='"Foo", "Bar", "One"', filtered_categories="")
         filtered_feed = feedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 1)

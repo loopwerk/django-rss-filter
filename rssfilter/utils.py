@@ -29,18 +29,24 @@ def validate_feed(feed_url: str) -> FeedValidationSuccess | FeedValidationError:
         # that validating and then fetching the feed is done in a consistent
         # manner.
         r = httpx.get(feed_url, follow_redirects=True, timeout=2, headers={"User-Agent": USER_AGENT})
-
-        feed = feedparser.parse(r.text)
-        version = feed.get("version", "")
-        if not version:
+        feed = validate_feed_body(r.text)
+        if not feed:
             return FeedValidationError(False, "This doesn't seem to be a valid RSS or Atom feed")
         return FeedValidationSuccess(True, feed)
-    except ValueError:
-        return FeedValidationError(False, "This doesn't seem to be a valid RSS or Atom feed")
     except ConnectTimeout:
         return FeedValidationError(False, "Couldn't load the URL due to a connection timeout")
     except ConnectError:
         return FeedValidationError(False, "Couldn't load the URL due to a connection error")
+
+
+def validate_feed_body(body: str) -> Literal[False] | FeedParserDict:
+    try:
+        feed = feedparser.parse(body)
+        return feed if feed.version else False
+    except AttributeError:
+        return False
+    except ValueError:
+        return False
 
 
 def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str) -> str:
@@ -59,8 +65,12 @@ def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str) -
     if published := feed.feed.get("published"):
         fg.pubDate(published)
 
-    filtered_words_list = [item.strip().lower() for item in filtered_words.split(",") if item.strip()]
-    filtered_categories_list = [item.strip().lower() for item in filtered_categories.split(",") if item.strip()]
+    filtered_words_list = [item.lower().strip().strip('"').strip("'") for item in filtered_words.split(",")]
+    filtered_categories_list = [item.lower().strip().strip('"').strip("'") for item in filtered_categories.split(",")]
+
+    # Filter out empty strings
+    filtered_words_list = [x for x in filtered_words_list if x]
+    filtered_categories_list = [x for x in filtered_categories_list if x]
 
     for entry in feed.entries:
         # Check if the title contains filtered words
