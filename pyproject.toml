@@ -1,6 +1,6 @@
 [project]
 name = "django-rss-filter"
-version = "0.11.0"
+version = "0.12.0"
 description = "Filter public RSS feeds, remove articles that contain certain keywords or categories."
 authors = [
     {name = "Kevin Renskers", email = "kevin@loopwerk.io"},
@@ -31,8 +31,12 @@ Repository = "https://github.com/loopwerk/django-rss-filter.git"
 Issues = "https://github.com/loopwerk/django-rss-filter/issues"
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.7.19,<0.8.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "rssfilter"
+module-root = ""
 
 [tool.uv]
 package = true

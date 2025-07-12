@@ -80,7 +80,7 @@ class FeedCache(models.Model):
             self.feed_body = r.text
             self.cache_date = timezone.now()
             self.save()
-        except (ConnectTimeout, ConnectError):
+        except (ConnectTimeout, ConnectError, AttributeError):
             # Do nothing, just return the cached version
             pass
 
