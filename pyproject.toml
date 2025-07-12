@@ -1,6 +1,6 @@
 [project]
 name = "django-rss-filter"
-version = "0.12.0"
+version = "0.13.0"
 description = "Filter public RSS feeds, remove articles that contain certain keywords or categories."
 authors = [
     {name = "Kevin Renskers", email = "kevin@loopwerk.io"},

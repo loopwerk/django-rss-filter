@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from httpx import ConnectError, ConnectTimeout
+from httpx import ConnectError, ConnectTimeout, ReadTimeout
 
 from . import USER_AGENT
 from .settings import RSS_FILTER_CACHE_SECONDS
@@ -80,8 +80,8 @@ class FeedCache(models.Model):
             self.feed_body = r.text
             self.cache_date = timezone.now()
             self.save()
-        except (ConnectTimeout, ConnectError, AttributeError):
-            # Do nothing, just return the cached version
+        except (ConnectTimeout, ConnectError, ReadTimeout):
+            # Do nothing, just return the cached version (if available)
             pass
 
         return self.feed_body
