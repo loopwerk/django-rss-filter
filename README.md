@@ -10,7 +10,7 @@ This is a plugin (an "app") for the Django web framework. It is **not a standalo
 
 **If you are a Django developer:** You're in the right place! Skip to the "Getting started" section to integrate this app into your project.
 
-**If you just want a simple, ready-to-run RSS filtering server:** Simply use https://www.rssfilter.com which has user-friendly ways to create and edit filtered RSS feeds.
+**If you just want ready-to-use RSS filtering:** Simply use https://www.rssfilter.com which has user-friendly ways to create and edit filtered RSS feeds.
 
 ## Getting started
 
