@@ -52,6 +52,8 @@ Unit tests can be run with `uv run pytest`.
 
 ## About Feature Requests
 
+Please consider, that django-rss-filter is a low-level package, that other Django developers use to include into their own Django projects, hence it has to do its one task in the most specific fashion.
+
 This project is feature-complete — it does what I needed it to do, and I’m not actively looking to expand its functionality.
 
 I’m not accepting feature requests via issues. Please understand that asking for new features is essentially asking for free work — not just to build something, but to maintain it over time. And since I don’t personally need those features, I’m unlikely to invest time in them.
