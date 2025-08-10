@@ -7,3 +7,4 @@ wheels/
 *.egg-info
 .venv
 example/db.sqlite3
+/uv.lock
