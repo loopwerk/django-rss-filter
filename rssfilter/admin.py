@@ -6,8 +6,9 @@ from .models import FilteredFeed
 
 @admin.register(FilteredFeed)
 class FilteredFeedAdmin(admin.ModelAdmin):
-    list_display = ["id", "created", "feed_url", "filtered_words", "filtered_categories", "view"]
+    list_display = ["id", "created", "cache_date", "feed_url", "filtered_words", "filtered_categories", "view"]
     search_fields = ["uuid", "feed_url"]
+    list_filter = ["created", "cache_date"]
     date_hierarchy = "created"
     ordering = ["-id"]
 
