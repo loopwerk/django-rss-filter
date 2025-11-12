@@ -1,6 +1,6 @@
 [project]
 name = "django-rss-filter"
-version = "0.14.0"
+version = "0.14.1"
 description = "Filter public RSS feeds, remove articles that contain certain keywords or categories."
 authors = [
     {name = "Kevin Renskers", email = "kevin@loopwerk.io"},
@@ -16,6 +16,24 @@ dependencies = [
     "httpx>=0.28.1",
 ]
 keywords = ["rss", "atom", "feed", "filter", "mute", "django"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Framework :: Django",
+  "Framework :: Django :: 4.2",
+  "Framework :: Django :: 5.0",
+  "Framework :: Django :: 5.1",
+  "Framework :: Django :: 5.2",
+  "Framework :: Django :: 6.0",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
+]
 
 [dependency-groups]
 dev = [
