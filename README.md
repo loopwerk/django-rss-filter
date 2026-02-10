@@ -81,3 +81,7 @@ I’m not accepting feature requests via issues. Please understand that asking f
 If you’d like to add a new feature, you’re welcome to open a pull request. Just know that I’ll evaluate it carefully, because even merged contributions become part of what I maintain. To avoid spending time on a PR that may not be accepted, I recommend starting a discussion first — that way we can talk through the idea and see if it fits.
 
 This approach helps me avoid burnout and keep the project sustainable. Thanks for understanding!
+
+## Support
+
+Commercial support is available via [Loopwerk](https://www.loopwerk.io/open-source/support/).
