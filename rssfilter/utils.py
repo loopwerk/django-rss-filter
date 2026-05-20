@@ -2,10 +2,10 @@ from dataclasses import dataclass
 from typing import Literal
 
 import feedparser
-import httpx
+import httpx2
 from feedgen.feed import FeedGenerator
 from feedparser import FeedParserDict
-from httpx import ConnectError, ConnectTimeout
+from httpx2 import ConnectError, ConnectTimeout
 
 from . import USER_AGENT
 
@@ -28,7 +28,7 @@ def validate_feed(feed_url: str) -> FeedValidationSuccess | FeedValidationError:
         # since we can't set a timeout with feedparser. It also makes sure
         # that validating and then fetching the feed is done in a consistent
         # manner.
-        r = httpx.get(feed_url, follow_redirects=True, timeout=2, headers={"User-Agent": USER_AGENT})
+        r = httpx2.get(feed_url, follow_redirects=True, timeout=2, headers={"User-Agent": USER_AGENT})
         feed = validate_feed_body(r.text)
         if not feed:
             return FeedValidationError(False, "This doesn't seem to be a valid RSS or Atom feed")

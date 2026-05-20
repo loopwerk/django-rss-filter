@@ -1,12 +1,12 @@
 import uuid
 from datetime import timedelta
 
-import httpx
+import httpx2
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from httpx import ConnectError, ConnectTimeout, ReadTimeout
+from httpx2 import ConnectError, ConnectTimeout, ReadTimeout
 
 from . import USER_AGENT
 from .settings import RSS_FILTER_CACHE_SECONDS
@@ -76,7 +76,7 @@ class FeedCache(models.Model):
             return self.feed_body
 
         try:
-            r = httpx.get(self.feed_url, follow_redirects=True, timeout=2, headers={"User-Agent": USER_AGENT})
+            r = httpx2.get(self.feed_url, follow_redirects=True, timeout=2, headers={"User-Agent": USER_AGENT})
             self.feed_body = r.text
             self.cache_date = timezone.now()
             self.save()
