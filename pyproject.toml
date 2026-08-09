@@ -61,7 +61,9 @@ package = true
 
 [tool.ruff]
 line-length = 120
+extend-exclude = ["rssfilter/migrations"]
 lint.extend-select = ["I", "N"]
+lint.extend-ignore = ["RUF012"]
 
 [tool.mypy]
 disable_error_code = ["import-untyped"]

@@ -71,9 +71,8 @@ def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str) -
 
     for entry in feed.entries:
         # Check if the title contains filtered words
-        if len(filtered_words_list):
-            if any(word in entry.title.lower() for word in filtered_words_list):
-                continue
+        if any(word in entry.title.lower() for word in filtered_words_list):
+            continue
 
         # Check if the categories/terms contain filtered categories
         if len(filtered_categories_list) and entry.get("tags"):
