@@ -52,16 +52,16 @@ version = "0.15.0"
 source = { editable = "../" }
 dependencies = [
     { name = "django" },
+    { name = "fastfeedparser" },
     { name = "feedgen" },
-    { name = "feedparser" },
     { name = "httpx2" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "django", specifier = ">=4.2.0" },
+    { name = "fastfeedparser", specifier = ">=0.6.1" },
     { name = "feedgen", specifier = ">=1.0.0" },
-    { name = "feedparser", specifier = ">=6.0.11" },
     { name = "httpx2", specifier = ">=2.2.0" },
 ]
 
@@ -89,6 +89,19 @@ requires-dist = [
 ]
 
 [[package]]
+name = "fastfeedparser"
+version = "0.6.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "lxml" },
+    { name = "python-dateutil" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5d/80/bef88e335fc9f373c501d36466014cb7179ad3bcb93e3a98985d6cfb7b80/fastfeedparser-0.6.1.tar.gz", hash = "sha256:0a429b5b364447577e48339297ad1d5875889a145c9ed4cc6a4236fc13a246be", size = 30665, upload-time = "2026-08-04T03:59:08.285Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/46/22/69aa3e7077a69f25ba1a91588a31110af9202032b85e11c34d5c667f3098/fastfeedparser-0.6.1-py3-none-any.whl", hash = "sha256:81f636a3eafb6bd6f443345a50d8b6675cdfce668b481bf16d233a232b0ba70a", size = 23832, upload-time = "2026-08-04T03:59:07.152Z" },
+]
+
+[[package]]
 name = "feedgen"
 version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -97,18 +110,6 @@ dependencies = [
     { name = "python-dateutil" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/6b/59/be0a6f852b5dfbf19e6c8e962c8f41407697f9f52a7902250ed98683ae89/feedgen-1.0.0.tar.gz", hash = "sha256:d9bd51c3b5e956a2a52998c3708c4d2c729f2fcc311188e1e5d3b9726393546a", size = 258496, upload-time = "2023-12-25T18:04:08.421Z" }
-
-[[package]]
-name = "feedparser"
-version = "6.0.12"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "sgmllib3k" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/dc/79/db7edb5e77d6dfbc54d7d9df72828be4318275b2e580549ff45a962f6461/feedparser-6.0.12.tar.gz", hash = "sha256:64f76ce90ae3e8ef5d1ede0f8d3b50ce26bcce71dd8ae5e82b1cd2d4a5f94228", size = 286579, upload-time = "2025-09-10T13:33:59.486Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/4e/eb/c96d64137e29ae17d83ad2552470bafe3a7a915e85434d9942077d7fd011/feedparser-6.0.12-py3-none-any.whl", hash = "sha256:6bbff10f5a52662c00a2e3f86a38928c37c48f77b3c511aedcd51de933549324", size = 81480, upload-time = "2025-09-10T13:33:58.022Z" },
-]
 
 [[package]]
 name = "h11"
@@ -229,12 +230,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/66/c0/0c8b6ad9f17a802ee
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl", hash = "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427", size = 229892, upload-time = "2024-03-01T18:36:18.57Z" },
 ]
-
-[[package]]
-name = "sgmllib3k"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/9e/bd/3704a8c3e0942d711c1299ebf7b9091930adae6675d7c8f476a7ce48653c/sgmllib3k-1.0.0.tar.gz", hash = "sha256:7868fb1c8bfa764c1ac563d3cf369c381d1325d36124933a726f29fcdaa812e9", size = 5750, upload-time = "2010-08-24T14:33:52.445Z" }
 
 [[package]]
 name = "six"
