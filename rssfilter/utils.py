@@ -52,9 +52,11 @@ def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str) -
     fg = FeedGenerator()
     fg.id(feed.feed.get("id") or feed.feed.get("link"))
     fg.title(feed.feed.title)
-    fg.link(href=feed.feed.get("link"))
     fg.description(feed.feed.get("description") or feed.feed.get("subtitle") or "Filtered feed")
     fg.language(feed.feed.get("language") or "en")
+
+    if feed_link := feed.feed.get("link"):
+        fg.link(href=feed_link)
 
     if updated := feed.feed.get("updated"):
         fg.updated(updated)
@@ -89,7 +91,8 @@ def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str) -
         fe = fg.add_entry()
         fe.id(entry_id)
         fe.title(entry.title)
-        fe.link(href=entry.get("link"))
+        if entry_link := entry.get("link"):
+            fe.link(href=entry_link)
         fe.description(entry.get("description") or "")
         fe.pubDate(entry.get("published") or None)
 

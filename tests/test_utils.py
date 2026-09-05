@@ -100,6 +100,27 @@ class UtilsTest(TestCase):
         self.assertEqual(len(filtered_feed.entries), 1)
         self.assertEqual(filtered_feed.entries[0].title, "Article Two")
 
+    def test_entry_without_link(self):
+        body_without_links = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <title type="text">Example Feed</title>
+            <updated>2025-03-28T18:18:49+00:00</updated>
+            <id>https://www.example.com/rss/index.xml</id>
+            <entry>
+                <title>Article One</title>
+                <id>https://www.example.com/one/</id>
+                <updated>2025-03-28T14:18:49-04:00</updated>
+                <summary>Article Summary</summary>
+            </entry>
+        </feed>
+        """
+        filtered_feed_body = filter_feed(body_without_links, filtered_words="", filtered_categories="")
+        filtered_feed = fastfeedparser.parse(filtered_feed_body)
+
+        self.assertEqual(len(filtered_feed.entries), 1)
+        self.assertEqual(filtered_feed.entries[0].title, "Article One")
+
     def test_filter_categories(self):
         filtered_feed_body = filter_feed(body, filtered_words="", filtered_categories="Category Four")
         filtered_feed = fastfeedparser.parse(filtered_feed_body)
