@@ -1,8 +1,12 @@
+from xml.etree import ElementTree
+
 import fastfeedparser
 from django.test import TestCase
 
 from rssfilter.utils import filter_feed, validate_feed_body
 
+FEED_ID = "urn:uuid:ca0447ad-58e4-4fee-be44-1743c506415d"
+SELF_URL = "/ca0447ad-58e4-4fee-be44-1743c506415d"
 body = """
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:thr="http://purl.org/syndication/thread/1.0" xml:lang="en-US">
@@ -48,53 +52,69 @@ class UtilsTest(TestCase):
         self.assertFalse(result)
 
     def test_filter_words(self):
-        filtered_feed_body = filter_feed(body, filtered_words="One", filtered_categories="")
+        filtered_feed_body = filter_feed(
+            body, filtered_words="One", filtered_categories="", feed_id=FEED_ID, self_url=SELF_URL
+        )
         filtered_feed = fastfeedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 1)
         self.assertEqual(filtered_feed.entries[0].title, "Article Two")
 
     def test_filter_words_case_insenstive(self):
-        filtered_feed_body = filter_feed(body, filtered_words="ONE", filtered_categories="")
+        filtered_feed_body = filter_feed(
+            body, filtered_words="ONE", filtered_categories="", feed_id=FEED_ID, self_url=SELF_URL
+        )
         filtered_feed = fastfeedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 1)
         self.assertEqual(filtered_feed.entries[0].title, "Article Two")
 
     def test_filter_words_empty(self):
-        filtered_feed_body = filter_feed(body, filtered_words="", filtered_categories="")
+        filtered_feed_body = filter_feed(
+            body, filtered_words="", filtered_categories="", feed_id=FEED_ID, self_url=SELF_URL
+        )
         filtered_feed = fastfeedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 2)
 
     def test_filter_words_with_empty_quotes(self):
-        filtered_feed_body = filter_feed(body, filtered_words='""', filtered_categories="")
+        filtered_feed_body = filter_feed(
+            body, filtered_words='""', filtered_categories="", feed_id=FEED_ID, self_url=SELF_URL
+        )
         filtered_feed = fastfeedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 2)
 
     def test_filter_words_not_found(self):
-        filtered_feed_body = filter_feed(body, filtered_words="Foo", filtered_categories="")
+        filtered_feed_body = filter_feed(
+            body, filtered_words="Foo", filtered_categories="", feed_id=FEED_ID, self_url=SELF_URL
+        )
         filtered_feed = fastfeedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 2)
 
     def test_filter_words_comma_seperated(self):
-        filtered_feed_body = filter_feed(body, filtered_words="Foo, Bar, One", filtered_categories="")
+        filtered_feed_body = filter_feed(
+            body, filtered_words="Foo, Bar, One", filtered_categories="", feed_id=FEED_ID, self_url=SELF_URL
+        )
         filtered_feed = fastfeedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 1)
         self.assertEqual(filtered_feed.entries[0].title, "Article Two")
 
     def test_filter_words_with_quotes(self):
-        filtered_feed_body = filter_feed(body, filtered_words="'Foo', 'Bar', 'One'", filtered_categories="")
+        filtered_feed_body = filter_feed(
+            body, filtered_words="'Foo', 'Bar', 'One'", filtered_categories="", feed_id=FEED_ID, self_url=SELF_URL
+        )
         filtered_feed = fastfeedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 1)
         self.assertEqual(filtered_feed.entries[0].title, "Article Two")
 
     def test_filter_words_with_double_quotes(self):
-        filtered_feed_body = filter_feed(body, filtered_words='"Foo", "Bar", "One"', filtered_categories="")
+        filtered_feed_body = filter_feed(
+            body, filtered_words='"Foo", "Bar", "One"', filtered_categories="", feed_id=FEED_ID, self_url=SELF_URL
+        )
         filtered_feed = fastfeedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 1)
@@ -115,15 +135,29 @@ class UtilsTest(TestCase):
             </entry>
         </feed>
         """
-        filtered_feed_body = filter_feed(body_without_links, filtered_words="", filtered_categories="")
+        filtered_feed_body = filter_feed(
+            body_without_links, filtered_words="", filtered_categories="", feed_id=FEED_ID, self_url=SELF_URL
+        )
         filtered_feed = fastfeedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 1)
         self.assertEqual(filtered_feed.entries[0].title, "Article One")
 
     def test_filter_categories(self):
-        filtered_feed_body = filter_feed(body, filtered_words="", filtered_categories="Category Four")
+        filtered_feed_body = filter_feed(
+            body, filtered_words="", filtered_categories="Category Four", feed_id=FEED_ID, self_url=SELF_URL
+        )
         filtered_feed = fastfeedparser.parse(filtered_feed_body)
 
         self.assertEqual(len(filtered_feed.entries), 1)
         self.assertEqual(filtered_feed.entries[0].title, "Article One")
+
+    def test_feed_identifies_itself(self):
+        feed = ElementTree.fromstring(
+            filter_feed(body, filtered_words="", filtered_categories="", feed_id=FEED_ID, self_url=SELF_URL)
+        )
+        links = {link.get("rel"): link.get("href") for link in feed.findall("{http://www.w3.org/2005/Atom}link")}
+
+        self.assertEqual(feed.findtext("{http://www.w3.org/2005/Atom}id"), FEED_ID)
+        self.assertEqual(links["self"], SELF_URL)
+        self.assertEqual(links["alternate"], "https://www.example.com")

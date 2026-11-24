@@ -46,17 +46,18 @@ def validate_feed_body(body: str) -> Literal[False] | FastFeedParserDict:
         return False
 
 
-def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str) -> str:
+def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str, feed_id: str, self_url: str) -> str:
     feed = fastfeedparser.parse(feed_body)
 
     fg = FeedGenerator()
-    fg.id(feed.feed.get("id") or feed.feed.get("link"))
+    fg.id(feed_id)
+    fg.link(href=self_url, rel="self", type="application/atom+xml")
     fg.title(feed.feed.title)
     fg.description(feed.feed.get("description") or feed.feed.get("subtitle") or "Filtered feed")
     fg.language(feed.feed.get("language") or "en")
 
     if feed_link := feed.feed.get("link"):
-        fg.link(href=feed_link)
+        fg.link(href=feed_link, rel="alternate")
 
     if updated := feed.feed.get("updated"):
         fg.updated(updated)

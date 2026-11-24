@@ -55,7 +55,13 @@ class FilteredFeed(models.Model):
 
         feed_cache, _created = FeedCache.objects.get_or_create(feed_url=self.feed_url)
 
-        self.filtered_feed_body = filter_feed(feed_cache.get_feed_body(), self.filtered_words, self.filtered_categories)
+        self.filtered_feed_body = filter_feed(
+            feed_body=feed_cache.get_feed_body(),
+            filtered_words=self.filtered_words,
+            filtered_categories=self.filtered_categories,
+            feed_id=f"urn:uuid:{self.uuid}",
+            self_url=self.get_absolute_url(),
+        )
         self.cache_date = timezone.now()
         self.save()
 
