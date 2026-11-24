@@ -68,10 +68,6 @@ There is one setting that can be configured: `RSS_FILTER_CACHE_SECONDS`. The def
 
 This setting controls how long a feed will be cached before it's fetched, filtered, and stored again.
 
-## Tests
-
-Unit tests can be run with `uv run pytest`.
-
 ## About Feature Requests
 
 This project is feature-complete — it does what I needed it to do, and I’m not actively looking to expand its functionality.
