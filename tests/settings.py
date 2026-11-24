@@ -9,4 +9,6 @@ DATABASES = {
     }
 }
 
+ROOT_URLCONF = "rssfilter.urls"
+
 SECRET_KEY = "test_secret_key"

@@ -48,14 +48,22 @@ class FilteredFeed(models.Model):
 
         super().save(*args, **kwargs)
 
-    def get_filtered_feed_body(self) -> str:
+    def get_filtered_feed_body(self, self_url: str | None = None) -> str:
         five_mins_ago = timezone.now() - timedelta(seconds=RSS_FILTER_CACHE_SECONDS)
         if self.cache_date and self.cache_date > five_mins_ago:
             return self.filtered_feed_body
 
         feed_cache, _created = FeedCache.objects.get_or_create(feed_url=self.feed_url)
 
-        self.filtered_feed_body = filter_feed(feed_cache.get_feed_body(), self.filtered_words, self.filtered_categories)
+        self.filtered_feed_body = filter_feed(
+            feed_cache.get_feed_body(),
+            self.filtered_words,
+            self.filtered_categories,
+            # A stable, globally unique id of our own, so that feed readers
+            # can't confuse this feed with the unfiltered original.
+            feed_id=f"urn:uuid:{self.uuid}",
+            self_url=self_url,
+        )
         self.cache_date = timezone.now()
         self.save()
 

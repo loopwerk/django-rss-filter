@@ -46,17 +46,34 @@ def validate_feed_body(body: str) -> Literal[False] | FastFeedParserDict:
         return False
 
 
-def filter_feed(feed_body: str, filtered_words: str, filtered_categories: str) -> str:
+def filter_feed(
+    feed_body: str,
+    filtered_words: str,
+    filtered_categories: str,
+    feed_id: str | None = None,
+    self_url: str | None = None,
+) -> str:
     feed = fastfeedparser.parse(feed_body)
 
     fg = FeedGenerator()
-    fg.id(feed.feed.get("id") or feed.feed.get("link"))
+
+    # The filtered feed has to identify itself, and not the feed it was built
+    # from. Feed readers use the feed's id and its "self" link to work out
+    # which URL a subscription really points at: InoReader for example follows
+    # them and silently replaces the filtered feed with the unfiltered
+    # original. So `feed_id` and `self_url` describe the filtered feed, and the
+    # upstream feed only gets to supply the "alternate" link to its website.
+    fg.id(feed_id or self_url or feed.feed.get("id") or feed.feed.get("link"))
+
+    if self_url:
+        fg.link(href=self_url, rel="self", type="application/atom+xml")
+
     fg.title(feed.feed.title)
     fg.description(feed.feed.get("description") or feed.feed.get("subtitle") or "Filtered feed")
     fg.language(feed.feed.get("language") or "en")
 
     if feed_link := feed.feed.get("link"):
-        fg.link(href=feed_link)
+        fg.link(href=feed_link, rel="alternate")
 
     if updated := feed.feed.get("updated"):
         fg.updated(updated)

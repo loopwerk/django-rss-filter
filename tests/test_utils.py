@@ -1,3 +1,5 @@
+from xml.etree import ElementTree
+
 import fastfeedparser
 from django.test import TestCase
 
@@ -32,6 +34,10 @@ body = """
 	</entry>
 </feed>
 """
+
+
+ATOM_ID = "{http://www.w3.org/2005/Atom}id"
+ATOM_LINK = "{http://www.w3.org/2005/Atom}link"
 
 
 class UtilsTest(TestCase):
@@ -127,3 +133,56 @@ class UtilsTest(TestCase):
 
         self.assertEqual(len(filtered_feed.entries), 1)
         self.assertEqual(filtered_feed.entries[0].title, "Article One")
+
+    def test_feed_identifies_itself(self):
+        filtered_feed_body = filter_feed(
+            body,
+            filtered_words="",
+            filtered_categories="",
+            feed_id="urn:uuid:ca0447ad-58e4-4fee-be44-1743c506415d",
+            self_url="https://www.rssfilter.com/ca0447ad-58e4-4fee-be44-1743c506415d/",
+        )
+        feed = ElementTree.fromstring(filtered_feed_body)
+        links = {link.get("rel"): link.get("href") for link in feed.findall(ATOM_LINK)}
+
+        # Neither the id nor the "self" link may point at the original feed,
+        # or feed readers will subscribe to that one instead.
+        self.assertEqual(feed.findtext(ATOM_ID), "urn:uuid:ca0447ad-58e4-4fee-be44-1743c506415d")
+        self.assertEqual(links["self"], "https://www.rssfilter.com/ca0447ad-58e4-4fee-be44-1743c506415d/")
+
+        # The original website is still linked, but only as the alternate.
+        self.assertEqual(links["alternate"], "https://www.example.com")
+
+    def test_feed_id_falls_back_to_self_url(self):
+        filtered_feed_body = filter_feed(
+            body,
+            filtered_words="",
+            filtered_categories="",
+            self_url="https://www.rssfilter.com/ca0447ad-58e4-4fee-be44-1743c506415d/",
+        )
+        feed = ElementTree.fromstring(filtered_feed_body)
+
+        self.assertEqual(feed.findtext(ATOM_ID), "https://www.rssfilter.com/ca0447ad-58e4-4fee-be44-1743c506415d/")
+
+    def test_feed_without_self_url(self):
+        filtered_feed_body = filter_feed(body, filtered_words="", filtered_categories="")
+        feed = ElementTree.fromstring(filtered_feed_body)
+        links = {link.get("rel"): link.get("href") for link in feed.findall(ATOM_LINK)}
+
+        self.assertEqual(feed.findtext(ATOM_ID), "https://www.example.com/rss/index.xml")
+        self.assertNotIn("self", links)
+        self.assertEqual(links["alternate"], "https://www.example.com")
+
+    def test_entries_keep_their_original_links(self):
+        filtered_feed_body = filter_feed(
+            body,
+            filtered_words="",
+            filtered_categories="",
+            self_url="https://www.rssfilter.com/ca0447ad-58e4-4fee-be44-1743c506415d/",
+        )
+        filtered_feed = fastfeedparser.parse(filtered_feed_body)
+
+        self.assertEqual(
+            sorted(entry.link for entry in filtered_feed.entries),
+            ["https://www.example.com/one/", "https://www.example.com/two/"],
+        )
